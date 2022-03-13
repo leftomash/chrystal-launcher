@@ -6,4 +6,4 @@ just a cli based no-gui trash application for ~~updating~~ downloading [chrys' g
 
 &rarr; i will also make a gui version later ~~knowing me probably not~~
 
-> ~~also it only works on linux which i don't think anyone playing this will be~~
+> ~~also it only works on linux which i don't think anyone playing this will be using~~
