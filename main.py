@@ -1,31 +1,71 @@
 def main() -> None:
     import os
+    from sys import platform
+    from pathlib import Path
 
-    system: str = __import__("sys").platform
+    def update() -> None:
+        import requests
 
-    if system == 'linux':
-        from mega import Mega
+        with open("game_dir.txt", "r") as gd:
+            game_dir = gd.read()
 
-        mega = Mega()
-
-        mega.login()
-        mega.download_url("https://mega.nz/file/XjRX2aKR#II1QmbxzTzcYJ1Qhi5sXUwt0_a4wrilC7CoF96QgJKo", "gods_call.zip")
-
-    elif system == 'win32':
-        pass
-    elif system == 'darwin':
-        pass
-    else:
-        print("bro wut kind of dum os are you using?")
-        input("press any key to exit")
-
-def get_latest_version(dl_link: str):
-    pass
+        get_file("", game_dir)
 
 
-def get_file(id: str, destination: str) -> None:
-    import requests
+    def get_file(fid: str, _game_dir: str) -> None:
+        from zdrive import Downloader
+
+        dler = Downloader()
+        dler.downloadFolder(fid, destinationFolder = Path.joinpath(_game_dir, "update"))
+
+    def cgd(game_dir: str) -> None:
+        with open("game_dir.txt", "r") as gd:
+            current_game_dir = gd.read()
+            
+            if game_dir == current_game_dir:
+                print("It is already the present game directory.")
+                return
+            else:
+                gd.truncate()
+                gd.write(game_dir)
+
+    def install() -> None:
+        with open("game_dir.txt", "r") as gd:
+            game_dir = gd.read()
+
+        if game_dir == '':
+            print("Game directory not set yet. Please use cdg to set a default game directory.")    
+        else:
+            get_file("", game_dir)
+
+    def help() -> None:
+        print("cdg <path>  sets a default game directory")
+        print("install     does a fresh installation of the latest version of the game")
+        print("update      updates the game to the latest version")
+        print("quit        quits the launcher")
+
+    cmds: dict = {
+        "update": update,
+        "gd": cgd,
+        "install": install,
+        "help": help,
+        "quit": quit
+    }
+
+    print("======CLI TOOL======\n")
+    while True:
+        cmd = input(">>> ").split(" ")
+
+        try:
+            cmds[cmd.pop(0)]()
+        except KeyError:
+            print("ERROR: Unknown Command")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        print("\nClosing the CLI Tool")
